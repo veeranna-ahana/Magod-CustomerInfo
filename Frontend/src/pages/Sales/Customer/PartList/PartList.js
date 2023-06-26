@@ -56,7 +56,7 @@ function PartList() {
   // let [formdescription,setFormDescription] = useState("");
   // let [formmtrlcost, setFormMtrlCost] = useState("");
   // let [formjwcost, setFormJwCost] = useState("");
-  // let [status, setStatus] = useState("");
+  let [status, setStatus] = useState("");
 
   // setFormMtrlCost("");
   // setStatus("** Select ***");
@@ -458,23 +458,32 @@ function PartList() {
   };
 
   let rendercustpartdetail = (custpart, id) => {
-    return (
-      <tr
-        className=""
-        style={{
-          backgroundColor: selectedPartId === id ? "#98A8F8" : "",
-          overflowY: "scroll",
-          cursor: "pointer",
-        }}
-        id={id}
-        onClick={() => selectItem(custpart, id)}
-      >
-        <td>{custpart["assyPartId"]}</td>
-        <td>{custpart["partid"]}</td>
-        <td>{custpart["partdesc"]}</td>
-        <td>{custpart["qty"]}</td>
-      </tr>
-    );
+    console.log("CUSTPARTTTT", custpart);
+    console.log("CUSTPARTTTTid", custpart["partid"]);
+    let custpartid = custpart["partid"];
+    console.log(custpartid);
+
+    // write if condetion to remove the default assypartidissue
+    if (custpartid === null) {
+    } else {
+      return (
+        <tr
+          className=""
+          style={{
+            backgroundColor: selectedPartId === id ? "#98A8F8" : "",
+            overflowY: "scroll",
+            cursor: "pointer",
+          }}
+          id={id}
+          onClick={() => selectItem(custpart, id)}
+        >
+          <td>{custpart["assyPartId"]}</td>
+          <td>{custpart["partid"]}</td>
+          <td>{custpart["partdesc"]}</td>
+          <td>{custpart["qty"]}</td>
+        </tr>
+      );
+    }
   };
 
   let selectedPart = (e) => {
@@ -564,11 +573,13 @@ function PartList() {
   };
 
   let selectItem = (item, id) => {
+    // console.log(item);
     setBtnAsmPrtDel(false);
     setBtnAsmPrtNew(true);
     setSelectedPartId(id);
     setAssmPartId(item.partid);
     setAssmId(item.assyPartId);
+    // setStatus();
   };
 
   let deleteassmparts = async () => {
