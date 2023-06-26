@@ -51,6 +51,7 @@ function CreateUsers() {
     setPassReset(selusrs["PassReset"] == true ? true : false);
     setUrole(selusrs["Role"]);
     setUnit(selusrs["Unit"]);
+    setSelectedUserId(id);
 
     postRequest(endpoints.getRoleMenus, { Role: selusrs["Role"] }, (data) => {
       setSelectedUserMenuData(data);
@@ -58,10 +59,13 @@ function CreateUsers() {
   };
 
   let renderusers = (selusrs, id) => {
+    console.log(selectedUserId);
+    // console.log(id);
     return (
       <tr
         style={{
           backgroundColor: selectedUserId === id ? "#98A8F8" : "",
+          // backgroundColor: "#98A8F8",
           cursor: "pointer",
         }}
         id={id}
@@ -183,6 +187,8 @@ function CreateUsers() {
     e.preventDefault();
     setBtnSave(false);
     setBtnDelete(true);
+    toast.success("Deleted User Successfully");
+
     postRequest(endpoints.delUsers, { uname: username }, async (data) => {
       if (data.status === "Deleted") {
         toast.success("Deleted User Successfully");

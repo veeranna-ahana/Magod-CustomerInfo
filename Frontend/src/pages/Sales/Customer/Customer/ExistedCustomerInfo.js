@@ -66,6 +66,7 @@ function UpdateCustomerDetails() {
   let [custstateid, setCustStateId] = useState("");
 
   // Contact Details
+  let [conid, setConid] = useState([]);
   let [conName, setContactName] = useState([]);
   let [conDept, setDept] = useState([]);
   let [conDesignation, setDesignation] = useState([]);
@@ -78,6 +79,12 @@ function UpdateCustomerDetails() {
 
   let [rawCustState, setRawCustState] = useState({});
 
+  // select row function
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleRowClick = (rowData) => {
+    setSelectedRow(rowData);
+  };
   let customerMenu = () => {
     window.location.href = "/customer";
   };
@@ -518,6 +525,9 @@ function UpdateCustomerDetails() {
     setBtnDel(false);
     setBtnUpd(false);
     setBtnNew(true);
+    setSelectedRow(item.id);
+    // setConid(item.id);
+    setConid(item.ContactID);
 
     //  setSelectedContId(item.Id);
     setContactName(item.conName ? item.conName : ".");
@@ -530,6 +540,7 @@ function UpdateCustomerDetails() {
   };
 
   let removeContactData = async () => {
+    toast.success("deleted successfully");
     let olddata = custContactData;
     // console.log(olddata);
     console.log("Remove Contact");
@@ -1329,10 +1340,18 @@ function UpdateCustomerDetails() {
                           </thead>
                           <tbody className="tablebody">
                             {custContactData.map((ccont) => {
+                              console.log(ccont);
                               return (
                                 <tr
                                   className=""
                                   key={ccont.id}
+                                  style={{
+                                    backgroundColor:
+                                      conid === ccont.ContactID
+                                        ? "#98A8F8"
+                                        : "",
+                                    cursor: "pointer",
+                                  }}
                                   onClick={() => selectItem(ccont)}
                                 >
                                   <td className="">{ccont.conName}</td>

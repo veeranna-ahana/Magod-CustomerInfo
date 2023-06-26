@@ -136,7 +136,8 @@ function CreateCustomer() {
       newCustName.match(spformat)
     ) {
       // if (isFirstClickRef.current) {
-      toast.error("Customer Name cannot be blank or have special characters");
+      toast.error("Customer Name cannot be blank or have special characters") &&
+        setAlertModal(false);
       //   isFirstClickRef.current = false;
       // }
 
@@ -147,7 +148,7 @@ function CreateCustomer() {
       branchName === "" ||
       branchName.replaceAll(" ", "") === ""
     ) {
-      toast.error("Branch Name cannot be blank");
+      toast.error("Branch Name cannot be blank") && setAlertModal(false);
       return;
     }
     if (custdetdatafiltered.length > 0) {
@@ -160,7 +161,7 @@ function CreateCustomer() {
           setAlertModal(false);
           {
             modcust.customerName != newCustName
-              ? toast.error("Customer Alrady Existed") && setAlertModal(false)
+              ? toast.error("Customer Already Existed") && setAlertModal(false)
               : setAlertModal(true);
           }
           // {
