@@ -33,40 +33,30 @@ function Header({ user }) {
   return (
     <>
       <nav className="header">
-        <div
-          style={{
-            marginLeft: "10px",
-            marginTop: "13px",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <h3>Magod ERP</h3>
-          </div>
-          <div style={{ marginLeft: "960px" }}>
-            {getUser() !== undefined ? (
+        <div style={{ marginLeft: "10px", marginTop: "5px" }}>
+          <h3>Magod ERP</h3>
+        </div>
+        <div style={{ marginRight: "30px" }}>
+          {getUser() !== undefined ? (
+            <>
+              <>{console.log(getUser())}</>
               <>
-                <>{console.log(getUser())}</>
-                <>
-                  {getUser()[0]["Name"]} - {getUser()[0]["UnitName"]} |{" "}
-                </>
-                <button
-                  style={{
-                    backgroundColor: "transparent",
-                    border: "none",
-                    color: "black",
-                  }}
-                  onClick={logout}
-                >
-                  Sign Out
-                </button>
+                {getUser()[0]["Name"]} - {getUser()[0]["UnitName"]} |{" "}
               </>
-            ) : (
-              ""
-            )}
-          </div>
+              <button
+                style={{
+                  backgroundColor: "transparent",
+                  border: "none",
+                  color: "black",
+                }}
+                onClick={logout}
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            ""
+          )}
         </div>
       </nav>
       <div>&nbsp;</div>

@@ -176,6 +176,7 @@ export const endpoints = {
   getPaymentRectsDetails: `${API}/accounts/paymentrectdetails`,
   getPrdSummary: `${API}/accounts/prdsummary`,
 
+  toCheckBomParts: `${API}/customers/checkbomassmparts`,
   //Paking And Invoice
   getData: `${API}/gettest/getdata`,
   getCustomerData: `${API}/schedulelist/getallcustomers`,

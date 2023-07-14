@@ -143,14 +143,14 @@ function CreateCustomer() {
 
       return;
     }
-    if (
-      branchName === null ||
-      branchName === "" ||
-      branchName.replaceAll(" ", "") === ""
-    ) {
-      toast.error("Branch Name cannot be blank") && setAlertModal(false);
-      return;
-    }
+    // if (
+    //   branchName === null ||
+    //   branchName === "" ||
+    //   branchName.replaceAll(" ", "") === ""
+    // ) {
+    //   toast.error("Branch Name cannot be blank") && setAlertModal(false);
+    //   return;
+    // }
     if (custdetdatafiltered.length > 0) {
       console.log("custdetdatafiltered");
       console.log(custdetdatafiltered);

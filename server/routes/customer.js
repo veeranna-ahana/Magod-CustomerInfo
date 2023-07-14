@@ -9,7 +9,7 @@ const { logger } = require("../helpers/logger");
 customerRouter.post("/allcustomers", async (req, res, next) => {
   try {
     misQueryMod(
-      "Select * from magodmis.cust_data order by Cust_name asc",
+      "Select * from magodmis.cust_data order by Cust_Code asc",
       (err, data) => {
         if (err) logger.error(err);
         res.send(data);
@@ -577,14 +577,19 @@ customerRouter.post("/bomassemblyparts", async (req, res) => {
         console.log(
           "Saving Assm Parts : " + dataarray[i].partid + "  cust : " + ccode
         );
+        console.log("insertinggggg the parts");
         misQueryMod(
           `Insert into magodmis.cust_assy_bom_list (Cust_AssyId, Cust_BOM_ListId, Quantity)
             Values(
                 (Select assytbl.Id as assyid from magodmis.cust_assy_data assytbl where AssyCust_PartId = '${dataarray[i].assyPartId}' and Cust_code='${ccode}'),
                 (SELECT bomlist.Id FROM magodmis.cust_bomlist as bomlist where PartId = '${dataarray[i].partid}' and Cust_code='${ccode}'), ${dataarray[i].qty})`,
           (err, data) => {
-            if (err) logger.error(err);
-            retdata.push(data);
+            if (err) {
+              logger.error(err);
+              console.log("error is their while inserting the data");
+            } else {
+              retdata.push(data);
+            }
           }
         );
       }
@@ -1073,6 +1078,7 @@ customerRouter.post(`/updatebomassembly`, async (req, res, next) => {
   console.log("Update Assm details");
   try {
     const mmagodid = req.body.mmagodid;
+    console.log(mmagodid);
     const asmstatus = req.body.assmstatus;
     const asmdesc = req.body.assmdesc;
     const mtrlcost = req.body.mtrlcost;
@@ -1081,11 +1087,13 @@ customerRouter.post(`/updatebomassembly`, async (req, res, next) => {
       `Select * from magodmis.cust_assy_data where MagodCode='${mmagodid}'`,
       (err, data) => {
         if (err) logger.error(err);
+        console.log(data);
         if (data.length > 0) {
           misQueryMod(
             `Update magodmis.cust_assy_data set Status='${asmstatus}',AssyDescription = '${asmdesc}',MtrlCost='${mtrlcost}',JobWorkCost='${jbwrkcost}' where MagodCode='${mmagodid}'`,
             (err, bomasmdata) => {
               if (err) logger.error(err);
+              console.log(bomasmdata);
               res.send({ status: "success" });
             }
           );
@@ -1097,33 +1105,301 @@ customerRouter.post(`/updatebomassembly`, async (req, res, next) => {
   }
 });
 
-customerRouter.post(`/deletebomassmparts`, async (req, res, next) => {
-  console.log("Deleting Parts ");
+// customerRouter.post(`/deletebomassmparts`, async (req, res, next) => {
+//   console.log("Deleting Parts ");
+//   try {
+//     const asmid = req.body.assmid;
+//     const asmpart = req.body.assmpartid;
+//     misQueryMod(
+//       `Select assytbl.Id as assyid from magodmis.cust_assy_data assytbl where AssyCust_PartId = '${asmid}'`,
+//       (err, asmdata) => {
+//         if (err) logger.error(err);
+//         console.log(asmdata);
+//         console.log(asmdata[0].assyid);
+//         console.log(asmpart);
+//         misQueryMod(
+//           `SELECT bomlist.Id FROM magodmis.cust_bomlist as bomlist where PartId = '${asmpart}'`,
+//           (err, asmprtdata) => {
+//             if (err) logger.error(err);
+//             console.log("asmprtdata " + asmprtdata[0].Id);
+//             misQueryMod(
+//               `Delete from magodmis.cust_assy_bom_list  where Cust_AssyId ='${asmdata[0].assyid}' and Cust_Bom_ListId='${asmprtdata[0].Id}'`,
+//               (err, deldata) => {
+//                 if (err) logger.error(err);
+//               }
+//             );
+//           }
+//         );
+//       }
+//     );
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// tocheckBOM parts duplicates
+
+// customerRouter.post("/tocheckbomparts", async (req, res, next) => {
+//   // console.log("tocheckbomparts");
+//   // console.log("tocheckbomparts", req.body);
+//   // console.log("tocheckbomparts", req.body.partid);
+//   let partid = req.body.partid;
+//   let custcode = req.body.custcode;
+//   let assyid = req.body.assyPartId;
+//   console.log("partid", partid);
+//   try {
+//     misQueryMod(
+//       `SELECT * FROM magodmis.cust_assy_bom_list as bomlist where Cust_AssyId=${assyid} and PartId = ${partid} and Cust_code=${custcode}`,
+
+//       (err, data) => {
+//         console.log("data" + data[0].Id);
+//         if (err) logger.error(err);
+//       }
+//     );
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+//===========================  To Check Duplicate BOM Assembly ===========================
+
+// customerRouter.post(`/checkbomassmparts`, async (req, res, next) => {
+//   console.log(
+//     "==================   checkbomassmparts  ========================="
+//   );
+
+//   try {
+//     console.log(req.body);
+//     let custcode = req.body.custcode;
+//     let partid = req.body.partid;
+//     let assyid = req.body.assyPartId;
+//     console.log("cust name", custcode);
+//     console.log("reqpartid", partid);
+//     console.log("saaembly id ", assyid);
+//     let statusVal = false;
+
+//     misQueryMod(
+//       `Select assytbl.Id as assyid from magodmis.cust_assy_data assytbl WHERE  Cust_code='${custcode}' `,
+//       (err, asmdata) => {
+//         if (err) logger.error(err);
+//         console.log("asmdata", asmdata);
+//         console.log("asmdatalength", asmdata.length);
+//         console.log("assyid " + asmdata[0].assyid);
+
+//         misQueryMod(
+//           `SELECT bomlist.Id FROM magodmis.cust_bomlist as bomlist where PartId = '${partid}' and Cust_code='${custcode}'`,
+//           (err, asmprtdata) => {
+//             console.log("asmprtdata ", asmprtdata);
+
+//             if (err) logger.error(err);
+//             console.log("asmprtdataid " + asmprtdata[0].Id);
+
+//             for (let i = 0; i < asmdata.length; i++) {
+//               console.log("entering into the for loop ");
+
+//               let Cust_AssyId = asmdata[i].assyid;
+//               let Cust_Bom_ListId = asmprtdata[0];
+
+//               console.log("for_custassyId", Cust_AssyId);
+//               console.log("for_Cust_Bom_ListId", Cust_Bom_ListId);
+
+//               misQueryMod(
+//                 `Select * from magodmis.cust_assy_bom_list  where Cust_AssyId ='${asmdata[i].assyid}' and Cust_Bom_ListId='${asmprtdata[0].Id}'`,
+
+//                 (err, bomdata) => {
+//                   console.log("bomdataaa", bomdata);
+//                   if (err) logger.error(err);
+//                   if (bomdata.length > 0) {
+//                     console.log("Duplicate");
+//                     // statusVal = true;
+//                     return res.send("Duplicates");
+//                   }
+//                 }
+//               );
+//             }
+//             return res.send("No Duplicates");
+//             // console.log("status val is ", statusVal);
+//             // if (statusVal === false) {
+//             //   console.log("condetion=false", statusVal);
+//             //   return res.send({ status: "Duplicatte" });
+//             // } else {
+//             //   console.log("condetion=true", statusVal);
+
+//             //   return res.send({ status: "No Duplicate" });
+//             // }
+//           }
+//         );
+//       }
+//     );
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+customerRouter.post(`/checkbomassmparts`, async (req, res, next) => {
+  console.log(
+    "==================   checkbomassmparts  ========================="
+  );
+
   try {
-    const asmid = req.body.assmid;
-    const asmpart = req.body.assmpartid;
+    console.log(req.body);
+    let custcode = req.body.custcode;
+    let partid = req.body.partid;
+    let assyid = req.body.assyPartId;
+    console.log("cust name", custcode);
+    console.log("reqpartid", partid);
+    console.log("saaembly id ", assyid);
+
+    const asmdata = await getAssyData(custcode);
+    console.log("asmdata", asmdata);
+    console.log("asmdatalength", asmdata.length);
+    console.log("assyid " + asmdata[0].assyid);
+
+    const asmprtdata = await getBomData(partid, custcode);
+    console.log("asmprtdata ", asmprtdata);
+    console.log("asmprtdataid " + asmprtdata[0].Id);
+
+    let hasDuplicate = false;
+
+    for (let i = 0; i < asmdata.length; i++) {
+      console.log("entering into the for loop ");
+      const bomdata = await getBomListData(asmdata[i].assyid, asmprtdata[0].Id);
+      console.log("bomdataaa", bomdata);
+      if (bomdata.length > 0) {
+        console.log("Duplicate");
+        hasDuplicate = true;
+        break;
+      }
+    }
+
+    if (hasDuplicate) {
+      console.log("status: Duplicates");
+      return res.send({ status: "Duplicates" });
+    } else {
+      console.log("status: No Duplicates");
+      return res.send({ status: "No Duplicates" });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+function getAssyData(custcode) {
+  return new Promise((resolve, reject) => {
     misQueryMod(
-      `Select assytbl.Id as assyid from magodmis.cust_assy_data assytbl where AssyCust_PartId = '${asmid}'`,
+      `SELECT assytbl.Id AS assyid FROM magodmis.cust_assy_data assytbl WHERE Cust_code='${custcode}'`,
       (err, asmdata) => {
-        if (err) logger.error(err);
-        console.log(asmdata);
-        console.log(asmdata[0].assyid);
-        console.log(asmpart);
+        if (err) {
+          reject(err);
+        } else {
+          resolve(asmdata);
+        }
+      }
+    );
+  });
+}
+
+function getBomData(partid, custcode) {
+  return new Promise((resolve, reject) => {
+    misQueryMod(
+      `SELECT bomlist.Id FROM magodmis.cust_bomlist as bomlist WHERE PartId = '${partid}' and Cust_code='${custcode}'`,
+      (err, asmprtdata) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(asmprtdata);
+        }
+      }
+    );
+  });
+}
+
+function getBomListData(assyid, bomListId) {
+  return new Promise((resolve, reject) => {
+    misQueryMod(
+      `SELECT * FROM magodmis.cust_assy_bom_list WHERE Cust_AssyId ='${assyid}' and Cust_Bom_ListId='${bomListId}'`,
+      (err, bomdata) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(bomdata);
+        }
+      }
+    );
+  });
+}
+
+// solution for partlist partid delete issue
+
+customerRouter.post(`/deletebomassmparts`, async (req, res, next) => {
+  console.log("==================   Deleting Parts  =========================");
+  try {
+    const olddata = req.body.olddata;
+    const newdata = req.body.newdata;
+
+    let responseSent = false; // Flag variable
+    console.log("olddata", olddata);
+    console.log("newdata", newdata);
+    for (let i = 0; i < olddata.length; i++) {
+      if (newdata.indexOf(olddata[i]) == -1) {
+        let asmid = olddata[i].assyPartId;
+        let asmpart = olddata[i].partid;
+        console.log("asmid " + asmid);
+        console.log("asmpart " + asmpart);
         misQueryMod(
-          `SELECT bomlist.Id FROM magodmis.cust_bomlist as bomlist where PartId = '${asmpart}'`,
-          (err, asmprtdata) => {
-            if (err) logger.error(err);
-            console.log("asmprtdata " + asmprtdata[0].Id);
+          `Select assytbl.Id as assyid,Cust_Code from magodmis.cust_assy_data assytbl where AssyCust_PartId = '${asmid}'`,
+          (err, asmdata) => {
+            if (err) {
+              logger.error(err);
+              if (!responseSent) {
+                res.send({ status: "error" }); // Send error response
+                responseSent = true;
+              }
+              return;
+            }
+            console.log("asmcustcode", asmdata);
+            console.log("asmcustcode", asmdata[0].Cust_Code);
+            console.log("assyid " + asmdata[0].assyid);
+            console.log("asmpart " + asmpart);
             misQueryMod(
-              `Delete from magodmis.cust_assy_bom_list  where Cust_AssyId ='${asmdata[0].assyid}' and Cust_Bom_ListId='${asmprtdata[0].Id}'`,
-              (err, deldata) => {
-                if (err) logger.error(err);
+              `SELECT bomlist.Id FROM magodmis.cust_bomlist as bomlist where PartId = '${asmpart}' and Cust_code='${asmdata[0].Cust_Code}' `,
+              (err, asmprtdata) => {
+                if (err) {
+                  logger.error(err);
+                  if (!responseSent) {
+                    res.send({ status: "error" }); // Send error response
+                    responseSent = true;
+                  }
+                  return;
+                }
+
+                console.log("asmprtdata****** " + asmprtdata[0].Id);
+                misQueryMod(
+                  `Delete from magodmis.cust_assy_bom_list  where Cust_AssyId ='${asmdata[0].assyid}' and Cust_Bom_ListId='${asmprtdata[0].Id}'`,
+                  (err, deldata) => {
+                    if (err) {
+                      logger.error(err);
+                      console.log("deldata", deldata);
+                      if (!responseSent) {
+                        res.send({ status: "error" }); // Send error response
+                        responseSent = true;
+                      }
+                      return;
+                    }
+
+                    // console.log("deldata", deldata);
+                    if (!responseSent) {
+                      res.send({ status: "success" }); // Send success response
+                      responseSent = true;
+                    }
+                  }
+                );
               }
             );
           }
         );
       }
-    );
+    }
   } catch (error) {
     next(error);
   }
