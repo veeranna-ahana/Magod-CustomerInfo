@@ -24,6 +24,7 @@ function CreateUsers() {
   let [unit, setUnit] = useState("");
   let [btnsave, setBtnSave] = useState(false);
   let [btndelete, setBtnDelete] = useState(true);
+  let [tablusername, settablusername] = useState();
 
   useEffect(() => {
     setBtnSave(false);
@@ -57,9 +58,10 @@ function CreateUsers() {
       setSelectedUserMenuData(data);
     });
   };
-
   let renderusers = (selusrs, id) => {
     console.log(selectedUserId);
+    console.log(selusrs.UserName);
+    // settablusername(selusrs.UserName);
     // console.log(id);
     return (
       <tr
@@ -108,6 +110,10 @@ function CreateUsers() {
       toast.error("Please fill all the fields");
       return;
     }
+
+    // if (e.target.elements.uname.value == setUname) {
+    //   toast.error("Duplicate username please check");
+    // }
     if (
       e.target.elements.urole.value == "" ||
       e.target.elements.urole.value == "Select Role"
@@ -130,16 +136,31 @@ function CreateUsers() {
       Unit: usrunit,
     };
     console.log(usrdata);
+    console.log(usrdata.UserName);
+    console.log(tablusername);
+
+    if (e.target.elements.uname.value != tablusername) {
+      // toast.error("Duplicate username please check");
+    } else {
+    }
+
     postRequest(endpoints.saveUsers, { usrdata }, (data) => {
       console.log(data.d);
       setSelectedUserRowData(data.d);
       if (data.status == "success") {
         toast.success("User Created successfully..");
       } else {
-        toast.error("User Already Exists..");
+        // toast.error("User Already Exists..");
+        // toast.success("User Created successfully..");
       }
+      // if (usrdata.UserName === ) {
+
+      // } else {
+
+      // }
 
       postRequest(endpoints.getUsers, {}, (data) => {
+        console.log(data);
         setSelectedUserRowData(data);
       });
     });
@@ -158,7 +179,7 @@ function CreateUsers() {
 
   const handleChangeAlphaNumeric = (e) => {
     const mvalue = e.target.value.replace(/[^A-Za-z0-9 ]/gi, "");
-    if (mvalue.includes("  ")) {
+    if (mvalue.includes(" ")) {
       toast.error("Cannot enter spaces for User Name");
       return;
     }

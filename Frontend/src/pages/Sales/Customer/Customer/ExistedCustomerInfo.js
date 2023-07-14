@@ -575,6 +575,7 @@ function UpdateCustomerDetails() {
 
   const handleChangeNumeric = (e) => {
     const mvalue = e.target.value.replace(/[^0-9]/gi, "");
+    console.log("mvalve", mvalue);
     if (e.target.value.length > 6) {
       // alert("Pin Code Only 6 digits are allowed..");
       toast.error("Pin Code Only 6 digits are allowed..");

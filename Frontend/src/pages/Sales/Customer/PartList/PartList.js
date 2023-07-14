@@ -57,7 +57,12 @@ function PartList() {
   // let [formmtrlcost, setFormMtrlCost] = useState("");
   // let [formjwcost, setFormJwCost] = useState("");
   let [status, setStatus] = useState("");
-
+  let [qty, setQty] = useState("");
+  let [mtrlcost, setMtrlcost] = useState("");
+  let [lbrcost, setLbrcost] = useState("");
+  let [Statusss, setStatusss] = useState("");
+  let [selectedbompartId, setSelectedbompartId] = useState("");
+  let [selectedbomassyid, setSelectedbomassyid] = useState("");
   // setFormMtrlCost("");
   // setStatus("** Select ***");
 
@@ -227,7 +232,7 @@ function PartList() {
               magodpartid: response["MagodPartId"],
             },
           ]);
-          toast.success("Added Part Successfully..");
+          toast.success("Added PartId Successfully..");
 
           // if (isFirstClickRef.current) {
           //   isFirstClickRef.current = false;
@@ -332,6 +337,7 @@ function PartList() {
               ]);
             }
           );
+          toast.success("Assembly added successfully");
         }
       }
     );
@@ -349,6 +355,7 @@ function PartList() {
   };
 
   const addCustPart = async (e) => {
+    // debugger;
     e.preventDefault();
     setBtnAsmPrtDel(true);
     setBtnAsmPrtNew(false);
@@ -388,26 +395,75 @@ function PartList() {
       "PartDescription"
     ];
 
+    // console.log("ENTERING INTO toCheckBomParts");
+
+    // toCheck BOM parts
+
     for (let i = 0; i < custpartdetails.length; i++) {
       if (custpartdetails[i].partid == partid) {
-        //     setCustPartDetails((olddata => [...olddata, { assyPartId: selectedCustAssy["AssyCust_PartId"], partid: partid, partdesc: partdesc, qty: qty }]));
-        // }
-        // else{
-
         toast.error("Duplicate Part Id.. Please check..");
-
-        // if (isFirstClickRef.current) {
-        //   isFirstClickRef.current = false;
-        // }
 
         return;
       }
     }
+
+    // await postRequest(
+    //   endpoints.toCheckBomParts,
+    //   {
+    //     custcode: selectedCust["Cust_Code"],
+    //     assyPartId: selcustassy,
+    //     partid: partid,
+    //   },
+    //   (resp) => {
+    //     console.log("RESPONSEE was came");
+    //     console.log("RESPONSEE", resp);
+    //     console.log("RESPONSEE", resp.status);
+    //     if (resp.status === "Duplicates") {
+    //       console.log("Duplicate partid");
+    //       toast.error("This partId is already used in another assembly.");
+    //     } else {
+    //       console.log(" No Duplicates present");
+    //       toast.success("Part added successfully");
+    //       if (partid !== null || partid !== "") {
+    //         setCustPartDetails((olddata) => [
+    //           ...olddata,
+    //           {
+    //             assyPartId: selcustassy,
+    //             partid: partid,
+    //             partdesc: partdesc,
+    //             qty: qty,
+    //           },
+    //         ]);
+
+    //         console.log(custpartdetails);
+    //       }
+    //     }
+    //   }
+    // );
+
+    // const CheckBom = () => {
+    // for (let i = 0; i < checkbom.length; i++) {
+    //   console.log(checkbom[i].PartId);
+    //   if (checkbom[i].PartId === partid) {
+    //     console.log(
+    //       "This part is used alrady in other assemly , please chose other"
+    //     );
+    //     toast.error(
+    //       "This part is used alrady in other assemly , please chose other"
+    //     );
+    //     return;
+    //   }
+    // }
+    // };
+    // CheckBom();
+
     // if (custpartdetails.find((part) => part["assyPartId"] === selectedCustAssy["AssyCust_PartId"])) {
     //     alert("Part already added");
     //     return;
     // }
+    toast.success("Part added successfully");
     console.log("Part id : " + partid);
+    // debugger;
     if (partid !== null || partid !== "") {
       //setCustPartDetails((olddata => [...olddata, { assyPartId: selectedCustAssy["AssyCust_PartId"], partid: partid, partdesc: partdesc, qty: qty }]));
       setCustPartDetails((olddata) => [
@@ -420,7 +476,7 @@ function PartList() {
         },
       ]);
 
-      console.log(custpartdetails);
+      //   console.log(custpartdetails);
     }
   };
 
@@ -435,6 +491,9 @@ function PartList() {
   };
 
   let renderassemblydetails = (assmpart, id) => {
+    // console.log(assmpart);
+    // console.log(assmpart["Status"]);
+    // console.log(id);
     return (
       <tr
         className=""
@@ -457,9 +516,17 @@ function PartList() {
     );
   };
 
+  // RENDER BOM TABLEDATA
   let rendercustpartdetail = (custpart, id) => {
+    console.log("updatingggg");
     console.log("CUSTPARTTTT", custpart);
-    console.log("CUSTPARTTTTid", custpart["partid"]);
+    console.log("custpartid", custpart.partid);
+    console.log("custassyid", custpart.assyPartId);
+    // setSelectedbompartId(custpart.partid);
+    // setSelectedbomassyid(custpart.assyPartId);
+
+    // console.log("custpartid", custpart["partid"]);
+    // console.log("custassyid", custpart["assyPartId"]);
     let custpartid = custpart["partid"];
     console.log(custpartid);
 
@@ -491,6 +558,7 @@ function PartList() {
   };
 
   let selectAssemblyPart = (part, id) => {
+    console.log("entering into onclick assy");
     setBtnAddNew(true);
     setBtnUpdate(false);
     setBtnAsmPrtDel(true);
@@ -503,8 +571,12 @@ function PartList() {
     document.getElementById("formjwcost").value = part["JobWorkCost"];
     document.getElementById("formstatus").value = "Create"; // part["Status"];
     console.log(part["Status"]);
+    setStatusss(part["Status"]);
+    console.log(part);
     setSelectedCustAssy(part);
     console.log(part["AssyCust_PartId"]);
+    console.log(part["MtrlCost"]);
+    console.log(part["JobWorkCost"]);
     let cstasmid = part["AssyCust_PartId"];
     postRequest(
       endpoints.custbomAssemblyParts,
@@ -514,8 +586,10 @@ function PartList() {
       },
       (resp) => {
         console.log("custbomassemblyParts : " + resp.length);
+        console.log("response", resp);
         //    if(resp.length > 0) {
         //         if(resp.partid != null){
+
         setCustPartDetails(resp);
         //     }
 
@@ -525,7 +599,10 @@ function PartList() {
     );
   };
 
+  console.log("Statusss", Statusss);
+
   const updateAssembly = (e) => {
+    console.log("entering into updateassy");
     setBtnAddNew(false);
     setBtnUpdate(true);
     let mmagodid = document.getElementById("formmagodid").value;
@@ -533,10 +610,12 @@ function PartList() {
     let assmdesc = document.getElementById("formdescription").value;
     let mtrlcost = document.getElementById("formmtrlcost").value;
     let jobworkcost = document.getElementById("formjwcost").value;
+
     postRequest(
       endpoints.UpdateBOMAssembly,
       { mmagodid, assmstatus, assmdesc, mtrlcost, jobworkcost },
       (data) => {
+        console.log(data);
         if (data.status == "success") {
           // if (isFirstClickRef.current) {
           toast.success("Updated Assembly Details Successfully");
@@ -582,32 +661,93 @@ function PartList() {
     // setStatus();
   };
 
-  let deleteassmparts = async () => {
+  // let deleteassmparts = async () => {
+  //   console.log("deleteassmparts");
+  //   setBtnAsmPrtDel(true);
+  //   setBtnAsmPrtNew(false);
+  //   if (isFirstClickRef.current) {
+  //     toast.success("Deleted successfully");
+  //     isFirstClickRef.current = false;
+
+  //     console.log("custpartsdetails", custpartdetails);
+  //     let olddata = custpartdetails;
+  //     let newdata = olddata.filter(
+  //       (data) => data.assyid !== assmid && data.partid != assmpartid
+  //     );
+  //     setCustPartDetails(newdata);
+  //     postRequest(
+  //       endpoints.DeleteBOMAssemblyPart,
+  //       { assmid, assmpartid },
+  //       (deldata) => {
+  //         if (deldata.status == "success") {
+  //           console.log("Delete Success");
+  //         }
+  //       }
+  //     );
+  //   }
+  // };
+
+  // new solution to partid delete issue
+  let deleteassmparts = async (custpart) => {
+    console.log("entering into delete");
+    // console.log("entering into delete", selectedbompartId);
+    // console.log("entering into delete", selectedbomassyid);
+
+    console.log("custpartid", custpart.partid);
+    console.log("custassyid", custpart.assyPartId);
+
+    // debugger;
     setBtnAsmPrtDel(true);
     setBtnAsmPrtNew(false);
-    if (isFirstClickRef.current) {
-      toast.success("Deleted successfully");
-      isFirstClickRef.current = false;
-    }
     let olddata = custpartdetails;
     let newdata = olddata.filter(
       (data) => data.assyid !== assmid && data.partid != assmpartid
     );
+    console.log(olddata);
+    console.log(newdata);
     setCustPartDetails(newdata);
     postRequest(
       endpoints.DeleteBOMAssemblyPart,
-      { assmid, assmpartid },
+      // { assmid, assmpartid },
+      { olddata, newdata },
       (deldata) => {
         if (deldata.status == "success") {
+          toast.success("Part Deleted Successfully");
           console.log("Delete Success");
         }
       }
     );
   };
 
-  // handleChangeMtrlCost = (evt) => {
-  //   const mvalue = evt.target.value.replace(/[^0-9 ]/gi, "");
-  // };
+  let handleChangeQtyNumeric = (evt) => {
+    console.log("evt.target.value", evt.target.value);
+    const mvalue = evt.target.value.replace(/[^0-9]/gi, "");
+    console.log("mvalve", mvalue);
+    setQty(mvalue);
+  };
+  let handleChangeMtrlCost = (evt) => {
+    const mvalue = evt.target.value.replace(/[^0-9]/gi, "");
+    console.log("mvalve", mvalue);
+    setMtrlcost(mvalue);
+  };
+  let handleChangeLbrCost = (evt) => {
+    const mvalue = evt.target.value.replace(/[^0-9]/gi, "");
+    console.log("mvalve", mvalue);
+    setLbrcost(mvalue);
+  };
+  let handleKeyDown = (evt) => {
+    // Prevent entering the letter "e" (101 or 69 in key codes)
+    if (evt.key === "e" || evt.keyCode === 101 || evt.keyCode === 69) {
+      evt.preventDefault();
+    }
+    // Allow decimals for two digits only
+    const value = evt.target.value;
+    const decimalIndex = value.indexOf(".");
+    if (decimalIndex !== -1 && value.substring(decimalIndex + 1).length >= 2) {
+      evt.preventDefault();
+    }
+  };
+
   return (
     // <Container>
     //     <div className="addquotecard">
@@ -867,6 +1007,8 @@ function PartList() {
                       className="ip-select dropdown-field"
                       id="formstatus"
                       aria-label="Select Status"
+                      // value={Statusss}
+                      defaultValue={Statusss}
                     >
                       <option selected>Select Status</option>
                       {["Create", "Edit", "Locked", "Closed"].map((st) => {
@@ -877,27 +1019,48 @@ function PartList() {
                   {/* </Row> */}
 
                   {/* <Row> */}
-                  <Form.Group as={Row}>
+                  <Form.Group>
                     <Form.Label>Mtrl Cost</Form.Label>
                     <input
                       id="formmtrlcost"
                       className="in-fields"
                       type="number"
+                      onKeyDown={handleKeyDown}
                       min="0"
+                      onChange={handleChangeMtrlCost}
+                      // value={mtrlcost}
+                      defaultValue={mtrlcost}
                       placeholder="Enter Mtrl Cost"
                     />
                   </Form.Group>
-
-                  <Form.Group as={Row} className="mb-1">
+                  <Form.Group>
                     <Form.Label>Labour Cost</Form.Label>
                     <input
                       id="formjwcost"
                       className="in-fields"
                       type="number"
+                      onKeyDown={handleKeyDown}
                       min="0"
+                      onChange={handleChangeLbrCost}
+                      defaultValue={lbrcost}
+                      // value={lbrcost}
                       placeholder="Enter Labour Cost"
                     />
                   </Form.Group>
+
+                  {/* <Form.Group as={Row} className="mb-1">
+                    <Form.Label>Labour Cost</Form.Label>
+                    <input
+                      id="formjwcost"
+                      className="in-fields"
+                      type="text"
+                      min="0"
+                      onChange={handleChangeLbrCost}
+                      // defaultValue={lbrcost}
+                      value={lbrcost}
+                      placeholder="Enter Labour Cost"
+                    />
+                  </Form.Group> */}
                   {/* </Row> */}
                   <div>
                     <Form.Group className="mb-1" style={{ marginLeft: "25px" }}>
@@ -1025,7 +1188,9 @@ function PartList() {
                     <input
                       className="in-fields"
                       id="formqty"
-                      type="number"
+                      type="text"
+                      onChange={(e) => handleChangeQtyNumeric(e)}
+                      value={qty}
                       placeholder="Enter Quantity"
                       min="0"
                     />
@@ -1048,6 +1213,9 @@ function PartList() {
                       variant="primary"
                       type="submit"
                       disabled={btnasmprtnew}
+                      // onClick={() => {
+                      //   saveBomAssemblyParts();
+                      // }}
                     >
                       Add Assm Parts{" "}
                     </Button>
