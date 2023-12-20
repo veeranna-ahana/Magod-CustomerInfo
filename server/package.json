@@ -16,7 +16,6 @@
     "crypto-js": "^4.1.1",
     "dxf-writer": "^1.17.1",
     "express": "^4.18.1",
-    "html-pdf-node": "^1.0.8",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "merge-pdf-buffers": "^1.0.3",
