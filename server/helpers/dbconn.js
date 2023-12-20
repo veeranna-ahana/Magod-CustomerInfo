@@ -4,6 +4,7 @@ var misConn = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "password",
+
   database: "magodmis",
 });
 

@@ -1024,8 +1024,8 @@ function PartList() {
                     <input
                       id="formmtrlcost"
                       className="in-fields"
-                      type="number"
-                      onKeyDown={handleKeyDown}
+                      type="text"
+                      // onKeyDown={handleKeyDown}
                       min="0"
                       onChange={handleChangeMtrlCost}
                       // value={mtrlcost}
@@ -1038,8 +1038,8 @@ function PartList() {
                     <input
                       id="formjwcost"
                       className="in-fields"
-                      type="number"
-                      onKeyDown={handleKeyDown}
+                      type="text"
+                      // onKeyDown={handleKeyDown}
                       min="0"
                       onChange={handleChangeLbrCost}
                       defaultValue={lbrcost}
